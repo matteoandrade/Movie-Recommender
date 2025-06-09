@@ -23,6 +23,16 @@ def search(term):
     res = movies.iloc[pos][::-1]
     return res
 
+def recommend(term):
+    id = 1
+    simUsers = ratings[(ratings["movieId"] == id) & (ratings["rating"] >= 4)]["userId"].unique()
+    sim_recs = ratings[(ratings["userId"].isin(simUsers)) & (ratings["rating"] >= 4)]["movieId"]
+    sim_recs = sim_recs.value_counts() / len(sim_recs)
+    sim_recs = sim_recs[sim_recs > .1]
+    allUsers = ratings[(ratings["movieId"].isin(sim_recs.index)) & (ratings["rating"] >= 4)]
+    all_recs = allUsers["movieId"].value_counts() / len(allUsers["userId"].unique())
+
+recommend("hi")
 search_term = input("Hello, what movie would you like to search for?\n")
 print("Here are the results:")
 print(search(search_term)["title"])
