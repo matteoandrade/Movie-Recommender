@@ -23,8 +23,7 @@ def search(term):
     res = movies.iloc[pos][::-1]
     return res
 
-def recommend(term):
-    id = 1
+def recommend(id):
     simUsers = ratings[(ratings["movieId"] == id) & (ratings["rating"] >= 5)]["userId"].unique()
     sim_recs = ratings[(ratings["userId"].isin(simUsers)) & (ratings["rating"] > 4)]["movieId"]
     sim_recs = sim_recs.value_counts() / len(simUsers)
@@ -36,11 +35,15 @@ def recommend(term):
     rec_perc["score"] = rec_perc["similar"] / rec_perc["all"]
     rec_perc = rec_perc.sort_values("score", ascending=False)
     recs = rec_perc.head(10).merge(movies, left_index=True, right_on="movieId")
-    print("\nREC\n")
-    print(recs["title"])
+    return recs["title"]
 
-recommend("hi")
+# search_term = input("Hello, what movie would you like to search for?\n")
+# print("Here are the results:")
+# print(search(search_term)["title"])
 
-search_term = input("Hello, what movie would you like to search for?\n")
+
+rec_term = input("Hello, what movie do you want to base your recommendations off of?\n")
 print("Here are the results:")
-print(search(search_term)["title"])
+movie = search(rec_term)
+id = int((movie.iloc[0])["movieId"])
+print(recommend(id))
